@@ -17,6 +17,7 @@ type ProjetosContextType = {
 
 const ProjetosContext = createContext<ProjetosContextType | undefined>(undefined);
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useProjetos = () => {
     const context = useContext(ProjetosContext);
 
@@ -38,15 +39,20 @@ export const ProjetosProvider = ({ children }: { children: ReactNode }) => {
         };
 
         setProjetos((prev) => [...prev, novoProjeto]);
-    }
+    };
 
     const removerProjeto = (id: number) => {
         setProjetos((prev) => prev.filter((projetos) => projetos.id !== id));
     };
 
     const editarProjeto = (id: number, nome: string, desc: string) => {
-        // Por fazer
-    }
+        setProjetos((prev) => prev.map((projeto) => {
+            if (projeto.id === id) {
+                return { ...projeto, nome, desc };
+            }
+            return projeto;
+        }));
+    };
 
     return (
         <ProjetosContext.Provider
