@@ -1,5 +1,5 @@
 import { useProjetos } from "../context/Projetos"
-import { NovoProjeto } from "./utils/NovoProjeto";
+import { NovoProjeto } from "./utils/add/NovoProjeto";
 
 export const Dashboard = () => {
     const context = useProjetos();

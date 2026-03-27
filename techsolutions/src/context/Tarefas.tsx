@@ -6,15 +6,15 @@ type Tarefa = {
     id: number
     nome: string,
     desc: string,
-    data: number,
+    data: any,
     status: string
 };
 
 type TarefasContextType = {
     tarefas: Tarefa[];
-    adicionarTarefa: (nome: string, desc: string, data: number, status: string) => void;
+    adicionarTarefa: (nome: string, desc: string, data: any, status: string) => void;
     removerTarefa: (id: number) => void;
-    editarTarefa: (id: number) => void;
+    editarTarefa: (id: number, nome: string, desc: string, data: any, status: string) => void;
 };
 
 const TarefasContext = createContext<TarefasContextType | undefined>(undefined);
@@ -32,7 +32,7 @@ export const useTarefas = () => {
 export const TarefasProvider = ({ children }: { children: ReactNode }) => {
     const [tarefas, setTarefas] = useState<Tarefa[]>([]);
 
-    const adicionarTarefa = (nome: string, desc: string, data: number, status: string) => {
+    const adicionarTarefa = (nome: string, desc: string, data: any, status: string) => {
         const novaTarefa = {
             id: idTarefa++,
             nome: nome,
@@ -48,7 +48,7 @@ export const TarefasProvider = ({ children }: { children: ReactNode }) => {
         setTarefas((prev) => prev.filter((tarefas) => tarefas.id !== id));
     };
 
-    const editarTarefa = (id: number) => {
+    const editarTarefa = (id: number, nome: string, desc: string, data: any, status: string) => {
         // Por fazer
     }
 

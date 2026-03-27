@@ -12,7 +12,7 @@ type ProjetosContextType = {
     projetos: Projeto[];
     adicionarProjeto: (nome: string, desc: string) => void;
     removerProjeto: (id: number) => void;
-    editarProjeto: (id: number) => void;
+    editarProjeto: (id: number, nome: string, desc: string) => void;
 };
 
 const ProjetosContext = createContext<ProjetosContextType | undefined>(undefined);
@@ -44,7 +44,7 @@ export const ProjetosProvider = ({ children }: { children: ReactNode }) => {
         setProjetos((prev) => prev.filter((projetos) => projetos.id !== id));
     };
 
-    const editarProjeto = (id: number) => {
+    const editarProjeto = (id: number, nome: string, desc: string) => {
         // Por fazer
     }
 
