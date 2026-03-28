@@ -1,28 +1,33 @@
-import { useProjetos } from "../context/Projetos"
-import { NovoProjeto } from "./utils/add/NovoProjeto";
+import { useProjetos } from "../context/Projetos";
+import { NovoProjeto } from "./utils/projeto/NovoProjeto";
 
 export const Dashboard = () => {
-    const context = useProjetos();
+  const context = useProjetos();
 
-    const handleEdit = () => {
-        // por fazer
-    }
+  const handleEdit = () => {
+    if (context.projetos.length === 0) return;
+    const id = context.projetos[0].id;
+    const nome = context.projetos[0].nome;
+    const desc = context.projetos[0].desc;
+    context.editarProjeto(id, nome, desc);
+  };
 
-    return (
-        <>
-            <h1>Dashboard</h1>
-            <h2>Lista Projetos</h2>
-            <div className="projetos">
-                {context.projetos.map((projeto) => (
-                    <div key={projeto.id} className="projeto">
-                        <h2>{projeto.nome}</h2>
-                        <button onClick={() => context.removerProjeto(projeto.id)}>Remover</button>
-                        <button onClick={handleEdit}>Editar</button>
-                    </div>
-                ))}
-            </div>
-            <NovoProjeto />
-        </>
-
-    );
-}
+  return (
+    <>
+      <h1>Dashboard</h1>
+      <h2>Lista Projetos</h2>
+      <div className="projetos">
+        {context.projetos.map((projeto) => (
+          <div key={projeto.id} className="projeto">
+            <h2>{projeto.nome}</h2>
+            <button onClick={() => context.removerProjeto(projeto.id)}>
+              Remover
+            </button>
+            <button onClick={handleEdit}>Editar</button>
+          </div>
+        ))}
+      </div>
+      <NovoProjeto />
+    </>
+  );
+};
