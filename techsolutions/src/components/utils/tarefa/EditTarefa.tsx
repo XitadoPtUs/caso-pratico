@@ -1,14 +1,14 @@
 import { useRef } from "react";
-import { useTarefas } from "../../../context/Tarefas";
+import { useProjetos } from "../../../context/Projetos";
 
-export const EditTarefa = () => {
-  const context = useTarefas();
+export const EditTarefa = ({ projetoId }: { projetoId: number }) => {
+  const context = useProjetos();
   const nomeRef = useRef<HTMLInputElement>(null);
   const descRef = useRef<HTMLInputElement>(null);
   const dataRef = useRef<HTMLInputElement>(null);
   const statusRef = useRef<HTMLSelectElement>(null);
 
-  const handleEdit = () => {
+  const handleEdit = (tarefaId: number) => {
     if (
       nomeRef.current === null ||
       descRef.current === null ||
@@ -16,43 +16,46 @@ export const EditTarefa = () => {
       statusRef.current === null
     )
       return;
-    const id = 0; // placeholder por enquanto... tenho de informar qual é o id para aqui
     const nome = nomeRef.current.value;
-    const desc = descRef.current?.value;
-    const data = dataRef.current?.value;
-    const status = statusRef.current?.value;
+    const desc = descRef.current.value;
+    const data = dataRef.current.value;
+    const status = statusRef.current.value;
 
-    context.editarTarefa(id, nome, desc, data, status);
+    context.editarTarefa(projetoId, tarefaId, nome, desc, data, status);
   };
+
+  const projeto = context.projetos.find((p) => p.id === projetoId);
+  const tarefas = projeto?.tarefas || [];
 
   return (
     <div className="edit-tarefa">
-      {context.tarefas.map((tarefa) => (
+      {tarefas.map((tarefa) => (
         <div key={tarefa.id} className="tarefa">
+          <span>
+            {tarefa.nome} - {tarefa.status}
+          </span>
           <input
-            placeholder={tarefa.nome}
+            placeholder="Novo Nome"
             ref={nomeRef}
             type="text"
             required
           ></input>
           <input
-            placeholder={tarefa.desc}
+            placeholder="Nova Descrição"
             ref={descRef}
             type="text"
             required
           ></input>
-          <input
-            placeholder={tarefa.data}
-            ref={dataRef}
-            type="date"
-            required
-          ></input>
+          <input ref={dataRef} type="date" required></input>
           <select ref={statusRef} required>
             <option value="Pendente">Pendente</option>
             <option value="Em Progresso">Em Progresso</option>
             <option value="Concluída">Concluida</option>
           </select>
-          <button onClick={handleEdit}>Editar</button>
+          <button onClick={() => handleEdit(tarefa.id)}>Editar</button>
+          <button onClick={() => context.removerTarefa(projetoId, tarefa.id)}>
+            Remover
+          </button>
         </div>
       ))}
     </div>

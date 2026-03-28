@@ -1,5 +1,7 @@
 import { useProjetos } from "../context/Projetos";
 import { NovoProjeto } from "./utils/projeto/NovoProjeto";
+import { NovaTarefa } from "./utils/tarefa/NovaTarefa";
+import { EditTarefa } from "./utils/tarefa/EditTarefa";
 
 export const Dashboard = () => {
   const context = useProjetos();
@@ -18,12 +20,22 @@ export const Dashboard = () => {
       <h2>Lista Projetos</h2>
       <div className="projetos">
         {context.projetos.map((projeto) => (
-          <div key={projeto.id} className="projeto">
+          <div
+            key={projeto.id}
+            className="projeto"
+          >
             <h2>{projeto.nome}</h2>
+            <p>{projeto.desc}</p>
             <button onClick={() => context.removerProjeto(projeto.id)}>
-              Remover
+              Remover Projeto
             </button>
-            <button onClick={handleEdit}>Editar</button>
+            <button onClick={handleEdit}>Editar Projeto</button>
+
+            <div className="tarefas-container">
+              <h3>Tarefas do Projeto</h3>
+              <EditTarefa projetoId={projeto.id} />
+              <NovaTarefa projetoId={projeto.id} />
+            </div>
           </div>
         ))}
       </div>

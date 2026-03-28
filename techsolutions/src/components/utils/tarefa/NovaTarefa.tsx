@@ -1,8 +1,8 @@
 import { useRef } from "react";
-import { useTarefas } from "../../../context/Tarefas";
+import { useProjetos } from "../../../context/Projetos";
 
-export const NovaTarefa = () => {
-  const context = useTarefas();
+export const NovaTarefa = ({ projetoId }: { projetoId: number }) => {
+  const context = useProjetos();
   const nomeRef = useRef<HTMLInputElement>(null);
   const descRef = useRef<HTMLInputElement>(null);
   const dataRef = useRef<HTMLInputElement>(null);
@@ -21,20 +21,25 @@ export const NovaTarefa = () => {
     const data = dataRef.current.value;
     const status = statusRef.current.value;
 
-    context.adicionarTarefa(nome, desc, data, status);
+    context.adicionarTarefa(projetoId, nome, desc, data, status);
   };
 
   return (
     <div className="nova-tarefa">
-      <input placeholder="Nome" ref={nomeRef} type="text" required></input>
+      <input
+        placeholder="Nova Tarefa"
+        ref={nomeRef}
+        type="text"
+        required
+      ></input>
       <input placeholder="Desc" ref={descRef} type="text" required></input>
-      <input placeholder="Data" ref={descRef} type="date" required></input>
+      <input placeholder="Data" ref={dataRef} type="date" required></input>
       <select ref={statusRef} required>
         <option value="Pendente">Pendente</option>
         <option value="Em Progresso">Em Progresso</option>
         <option value="Concluída">Concluida</option>
       </select>
-      <button onClick={handleAdd}>Adicionar</button>
+      <button onClick={handleAdd}>Adicionar Tarefa</button>
     </div>
   );
 };
