@@ -2,17 +2,10 @@ import { useProjetos } from "../context/Projetos";
 import { NovoProjeto } from "./utils/projeto/NovoProjeto";
 import { NovaTarefa } from "./utils/tarefa/NovaTarefa";
 import { EditTarefa } from "./utils/tarefa/EditTarefa";
+import { EditProjeto } from "./utils/projeto/EditProjeto";
 
 export const Dashboard = () => {
   const context = useProjetos();
-
-  const handleEdit = () => {
-    if (context.projetos.length === 0) return;
-    const id = context.projetos[0].id;
-    const nome = context.projetos[0].nome;
-    const desc = context.projetos[0].desc;
-    context.editarProjeto(id, nome, desc);
-  };
 
   return (
     <>
@@ -29,7 +22,7 @@ export const Dashboard = () => {
             <button onClick={() => context.removerProjeto(projeto.id)}>
               Remover Projeto
             </button>
-            <button onClick={handleEdit}>Editar Projeto</button>
+            <EditProjeto projetoId={projeto.id} />
 
             <div className="tarefas-container">
               <h3>Tarefas do Projeto</h3>

@@ -1,7 +1,9 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useProjetos } from "../../../context/Projetos";
+import { ErrorModal } from "../../../modals/ErrorModal";
 
 export const NovaTarefa = ({ projetoId }: { projetoId: number }) => {
+  const [showError, setShowErrorMessage] = useState(false);
   const context = useProjetos();
   const nomeRef = useRef<HTMLInputElement>(null);
   const descRef = useRef<HTMLInputElement>(null);
@@ -14,14 +16,22 @@ export const NovaTarefa = ({ projetoId }: { projetoId: number }) => {
       descRef.current === null ||
       dataRef.current === null ||
       statusRef.current === null
-    )
-      return;
-    const nome = nomeRef.current.value;
-    const desc = descRef.current.value;
-    const data = dataRef.current.value;
-    const status = statusRef.current.value;
+    ) return;
+    if (nomeRef.current.value !== "" || descRef.current.value !== "" || dataRef.current.value !== "" || statusRef.current.value !== "") {
+      setShowErrorMessage(false);
+      const nome = nomeRef.current.value;
+      const desc = descRef.current.value;
+      const data = dataRef.current.value;
+      const status = statusRef.current.value;
 
-    context.adicionarTarefa(projetoId, nome, desc, data, status);
+      context.adicionarTarefa(projetoId, nome, desc, data, status);
+      nomeRef.current.value = "";
+      descRef.current.value = "";
+      dataRef.current.value = "";
+      statusRef.current.value = "";
+    } else {
+      setShowErrorMessage(true);
+    }
   };
 
   return (
@@ -40,6 +50,10 @@ export const NovaTarefa = ({ projetoId }: { projetoId: number }) => {
         <option value="Concluída">Concluida</option>
       </select>
       <button onClick={handleAdd}>Adicionar Tarefa</button>
+      <div id="modal-root"></div>
+      {showError && (
+        <ErrorModal />
+      )}
     </div>
   );
 };
