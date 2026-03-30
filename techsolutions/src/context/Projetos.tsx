@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, ReactNode, useEffect } from "react";
 import { Project } from "../models/Project";
 import { Task } from "../models/Task";
 
@@ -43,6 +43,18 @@ export const useProjetos = () => {
 
 export const ProjetosProvider = ({ children }: { children: ReactNode }) => {
   const [projetos, setProjetos] = useState<Project[]>([]);
+
+  useEffect(() => {
+    localStorage.setItem('projetos', JSON.stringify(projetos));
+  }, [projetos]);
+
+  useEffect(() => {
+    const projetosSalvos = localStorage.getItem('projetos');
+
+    if (projetosSalvos) {
+      setProjetos(JSON.parse(projetosSalvos));
+    }
+  }, []);
 
   const adicionarProjeto = (nome: string, desc: string) => {
     const novoProjeto = new Project(idProjeto++, nome, desc);

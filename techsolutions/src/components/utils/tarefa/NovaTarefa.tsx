@@ -28,7 +28,7 @@ export const NovaTarefa = ({ projetoId }: { projetoId: number }) => {
       nomeRef.current.value = "";
       descRef.current.value = "";
       dataRef.current.value = "";
-      statusRef.current.value = "";
+      statusRef.current.value = "Pendente";
     } else {
       setShowErrorMessage(true);
     }
