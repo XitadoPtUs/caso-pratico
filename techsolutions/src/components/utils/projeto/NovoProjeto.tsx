@@ -10,7 +10,7 @@ export const NovoProjeto = () => {
 
   const handleAdd = () => {
     if (nomeRef.current === null || descRef.current === null) return;
-    if (nomeRef.current.value !== "" || descRef.current.value !== "") {
+    if (nomeRef.current.value !== "" && descRef.current.value !== "") {
       setShowErrorMessage(false);
       const nome = nomeRef.current.value;
       const desc = descRef.current.value;

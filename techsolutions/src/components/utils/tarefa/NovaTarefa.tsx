@@ -17,12 +17,17 @@ export const NovaTarefa = ({ projetoId }: { projetoId: number }) => {
       dataRef.current === null ||
       statusRef.current === null
     ) return;
-    if (nomeRef.current.value !== "" || descRef.current.value !== "" || dataRef.current.value !== "" || statusRef.current.value !== "") {
+    if (nomeRef.current.value !== "" && descRef.current.value !== "" && dataRef.current.value !== "" && statusRef.current.value !== "") {
       setShowErrorMessage(false);
       const nome = nomeRef.current.value;
       const desc = descRef.current.value;
       const data = dataRef.current.value;
       const status = statusRef.current.value;
+
+      if (new Date(data) < new Date()) {
+        setShowErrorMessage(true);
+        return;
+      };
 
       context.adicionarTarefa(projetoId, nome, desc, data, status);
       nomeRef.current.value = "";

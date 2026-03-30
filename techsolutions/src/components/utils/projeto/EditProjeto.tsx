@@ -10,7 +10,7 @@ export const EditProjeto = ({ projetoId }: { projetoId: number }) => {
 
   const handleEdit = () => {
     if (nomeRef.current === null || descRef.current === null) return;
-    if (nomeRef.current.value !== "" || descRef.current.value !== "") {
+    if (nomeRef.current.value !== "" && descRef.current.value !== "") {
       setShowErrorMessage(false);
       const nome = nomeRef.current.value;
       const desc = descRef.current.value;
