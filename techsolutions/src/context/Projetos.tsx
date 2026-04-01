@@ -10,6 +10,7 @@ type ProjetosContextType = {
   adicionarProjeto: (nome: string, desc: string) => void;
   removerProjeto: (id: number) => void;
   editarProjeto: (id: number, nome: string, desc: string) => void;
+  progressoConcluido: (projeto: Project) => number;
   adicionarTarefa: (
     projetoId: number,
     nome: string,
@@ -74,6 +75,14 @@ export const ProjetosProvider = ({ children }: { children: ReactNode }) => {
         return projeto;
       }),
     );
+  };
+
+  const progressoConcluido = (projeto: Project) => {
+    if (projeto.tarefas.length === 0) return 100;
+    const tarefasConcluidas = projeto.tarefas.filter(
+      (tarefa) => tarefa.status === "Concluída",
+    ).length;
+    return Math.round((tarefasConcluidas / projeto.tarefas.length) * 100);
   };
 
   const adicionarTarefa = (
@@ -152,6 +161,7 @@ export const ProjetosProvider = ({ children }: { children: ReactNode }) => {
         adicionarProjeto,
         removerProjeto,
         editarProjeto,
+        progressoConcluido,
         adicionarTarefa,
         removerTarefa,
         editarTarefa,

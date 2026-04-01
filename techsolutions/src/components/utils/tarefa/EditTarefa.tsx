@@ -58,7 +58,7 @@ export const EditTarefa = ({ projetoId }: { projetoId: number }) => {
 
     const dataEscolhida = new Date(data);
     const hoje = new Date();
-    if (dataEscolhida < hoje || dataEscolhida.getFullYear() > 2200) {
+    if (dataEscolhida < hoje || dataEscolhida.getFullYear() > hoje.getFullYear() + 200) {
       setErrorMessage("Data da tarefa inválida. Escolha uma data futura válida.");
       return;
     }
@@ -69,6 +69,14 @@ export const EditTarefa = ({ projetoId }: { projetoId: number }) => {
     refs.descRef.current.value = "";
     refs.dataRef.current.value = "";
     refs.statusRef.current.value = "Pendente";
+  };
+
+  const trocarStatus = (tarefaId: number) => {
+    const projeto = context.projetos.find((p) => p.id === projetoId);
+    const tarefa = projeto?.tarefas.find((t) => t.id === tarefaId);
+    if (!projeto || !tarefa) return;
+    const novoStatus = tarefa.status === "Pendente" ? "Em Progresso" : tarefa.status === "Em Progresso" ? "Concluída" : "Pendente";
+    context.editarTarefa(projetoId, tarefaId, tarefa.nome, tarefa.desc, tarefa.data, novoStatus);
   };
 
   const projeto = context.projetos.find((p) => p.id === projetoId);
@@ -105,6 +113,7 @@ export const EditTarefa = ({ projetoId }: { projetoId: number }) => {
             <button onClick={() => context.removerTarefa(projetoId, tarefa.id)}>
               Remover
             </button>
+            <button onClick={() => trocarStatus(tarefa.id)}>Alterar Status</button>
             {errorMessage && <ErrorModal message={errorMessage} />}
           </div>
         );
