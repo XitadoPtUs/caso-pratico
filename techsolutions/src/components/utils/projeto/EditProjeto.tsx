@@ -1,15 +1,15 @@
-import { useRef, useState } from "react";
+import { RefObject, useRef, useState } from "react";
 import { useProjetos } from "../../../context/Projetos";
 import { ErrorModal } from "../../../modals/ErrorModal";
 
-export const EditProjeto = ({ projetoId }: { projetoId: number }) => {
+export const EditProjeto = () => {
   const [showError, setShowErrorMessage] = useState(false);
   const context = useProjetos();
 
   const refsMap = useRef<{
     [key: number]: {
-      nomeRef: React.RefObject<HTMLInputElement | null>;
-      descRef: React.RefObject<HTMLInputElement | null>;
+      nomeRef: RefObject<HTMLInputElement | null>;
+      descRef: RefObject<HTMLInputElement | null>;
     };
   }>({});
 

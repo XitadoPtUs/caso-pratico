@@ -22,7 +22,7 @@ export const Dashboard = () => {
             <button onClick={() => context.removerProjeto(projeto.id)}>
               Remover Projeto
             </button>
-            <EditProjeto projetoId={projeto.id} />
+            <EditProjeto />
 
             <div className="tarefas-container">
               <h3>Tarefas do Projeto</h3>

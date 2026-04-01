@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { RefObject, useRef, useState } from "react";
 import { useProjetos } from "../../../context/Projetos";
 import { ErrorModal } from "../../../modals/ErrorModal";
 
@@ -8,20 +8,20 @@ export const EditTarefa = ({ projetoId }: { projetoId: number }) => {
 
   const refsMap = useRef<{
     [key: number]: {
-      nomeRef: React.RefObject<HTMLInputElement | null>;
-      descRef: React.RefObject<HTMLInputElement | null>;
-      dataRef: React.RefObject<HTMLInputElement | null>;
-      statusRef: React.RefObject<HTMLSelectElement | null>;
+      nomeRef: RefObject<HTMLInputElement | null>;
+      descRef: RefObject<HTMLInputElement | null>;
+      dataRef: RefObject<HTMLInputElement | null>;
+      statusRef: RefObject<HTMLSelectElement | null>;
     };
   }>({});
 
   const getRefsForTarefa = (tarefaId: number) => {
     if (!refsMap.current[tarefaId]) {
       refsMap.current[tarefaId] = {
-        nomeRef: {current: null},
-        descRef: {current: null},
-        dataRef: {current: null},
-        statusRef: {current: null},
+        nomeRef: { current: null },
+        descRef: { current: null },
+        dataRef: { current: null },
+        statusRef: { current: null },
       };
     }
     return refsMap.current[tarefaId];
