@@ -18,10 +18,10 @@ export const EditTarefa = ({ projetoId }: { projetoId: number }) => {
   const getRefsForTarefa = (tarefaId: number) => {
     if (!refsMap.current[tarefaId]) {
       refsMap.current[tarefaId] = {
-        nomeRef: useRef<HTMLInputElement>(null),
-        descRef: useRef<HTMLInputElement>(null),
-        dataRef: useRef<HTMLInputElement>(null),
-        statusRef: useRef<HTMLSelectElement>(null),
+        nomeRef: {current: null},
+        descRef: {current: null},
+        dataRef: {current: null},
+        statusRef: {current: null},
       };
     }
     return refsMap.current[tarefaId];

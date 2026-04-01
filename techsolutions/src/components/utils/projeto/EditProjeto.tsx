@@ -16,8 +16,8 @@ export const EditProjeto = ({ projetoId }: { projetoId: number }) => {
   const getRefsForProjeto = (projetoId: number) => {
     if (!refsMap.current[projetoId]) {
       refsMap.current[projetoId] = {
-        nomeRef: useRef<HTMLInputElement>(null),
-        descRef: useRef<HTMLInputElement>(null),
+        nomeRef: { current: null },
+        descRef: { current: null },
       };
     }
     return refsMap.current[projetoId];
