@@ -5,26 +5,44 @@ import { ErrorModal } from "../../../modals/ErrorModal";
 export const EditTarefa = ({ projetoId }: { projetoId: number }) => {
   const [showError, setShowErrorMessage] = useState(false);
   const context = useProjetos();
-  const nomeRef = useRef<HTMLInputElement>(null);
-  const descRef = useRef<HTMLInputElement>(null);
-  const dataRef = useRef<HTMLInputElement>(null);
-  const statusRef = useRef<HTMLSelectElement>(null);
+
+  const refsMap = useRef<{
+    [key: number]: {
+      nomeRef: React.RefObject<HTMLInputElement | null>;
+      descRef: React.RefObject<HTMLInputElement | null>;
+      dataRef: React.RefObject<HTMLInputElement | null>;
+      statusRef: React.RefObject<HTMLSelectElement | null>;
+    };
+  }>({});
+
+  const getRefsForTarefa = (tarefaId: number) => {
+    if (!refsMap.current[tarefaId]) {
+      refsMap.current[tarefaId] = {
+        nomeRef: useRef<HTMLInputElement>(null),
+        descRef: useRef<HTMLInputElement>(null),
+        dataRef: useRef<HTMLInputElement>(null),
+        statusRef: useRef<HTMLSelectElement>(null),
+      };
+    }
+    return refsMap.current[tarefaId];
+  };
 
   const handleEdit = (tarefaId: number) => {
+    const refs = getRefsForTarefa(tarefaId);
     if (
-      nomeRef.current === null ||
-      descRef.current === null ||
-      dataRef.current === null ||
-      statusRef.current === null
+      refs.nomeRef.current === null ||
+      refs.descRef.current === null ||
+      refs.dataRef.current === null ||
+      refs.statusRef.current === null
     ) return;
-    if (nomeRef.current.value !== "" && descRef.current.value !== "" && dataRef.current.value !== "" && statusRef.current.value !== "") {
+    if (refs.nomeRef.current.value !== "" && refs.descRef.current.value !== "" && refs.dataRef.current.value !== "" && refs.statusRef.current.value !== "") {
       setShowErrorMessage(false);
-      const nome = nomeRef.current.value;
-      const desc = descRef.current.value;
-      const data = dataRef.current.value;
-      const status = statusRef.current.value;
+      const nome = refs.nomeRef.current.value;
+      const desc = refs.descRef.current.value;
+      const data = refs.dataRef.current.value;
+      const status = refs.statusRef.current.value;
 
-      if (nomeRef.current.value.trim().length < 3 || nomeRef.current.value.trim().length > 15 || descRef.current.value.trim().length < 10 || descRef.current.value.trim().length > 25) {
+      if (nome.trim().length < 3 || nome.trim().length > 15 || desc.trim().length < 10 || desc.trim().length > 25) {
         setShowErrorMessage(true);
         return;
       };
@@ -35,10 +53,10 @@ export const EditTarefa = ({ projetoId }: { projetoId: number }) => {
       };
 
       context.editarTarefa(projetoId, tarefaId, nome, desc, data, status);
-      nomeRef.current.value = "";
-      descRef.current.value = "";
-      dataRef.current.value = "";
-      statusRef.current.value = "Pendente";
+      refs.nomeRef.current.value = "";
+      refs.descRef.current.value = "";
+      refs.dataRef.current.value = "";
+      refs.statusRef.current.value = "Pendente";
     } else {
       setShowErrorMessage(true);
     }
@@ -49,37 +67,40 @@ export const EditTarefa = ({ projetoId }: { projetoId: number }) => {
 
   return (
     <div className="edit-tarefa">
-      {tarefas.map((tarefa) => (
-        <div key={tarefa.id} className="tarefa">
-          <span>
-            {tarefa.nome} - {tarefa.status}
-          </span>
-          <input
-            placeholder="Novo Nome"
-            ref={nomeRef}
-            type="text"
-          ></input>
-          <input
-            placeholder="Nova Descrição"
-            ref={descRef}
-            type="text"
-          ></input>
-          <input ref={dataRef} type="date"></input>
-          <select ref={statusRef}>
-            <option value="Pendente">Pendente</option>
-            <option value="Em Progresso">Em Progresso</option>
-            <option value="Concluída">Concluida</option>
-          </select>
-          <button onClick={() => handleEdit(tarefa.id)}>Editar</button>
-          <button onClick={() => context.removerTarefa(projetoId, tarefa.id)}>
-            Remover
-          </button>
-          <div id="modal-root"></div>
-          {showError && (
-            <ErrorModal />
-          )}
-        </div>
-      ))}
+      {tarefas.map((tarefa) => {
+        const refs = getRefsForTarefa(tarefa.id);
+        return (
+          <div key={tarefa.id} className="tarefa">
+            <span>
+              {tarefa.nome} - {tarefa.status}
+            </span>
+            <input
+              placeholder="Novo Nome"
+              ref={refs.nomeRef}
+              type="text"
+              required
+            ></input>
+            <input
+              placeholder="Nova Descrição"
+              ref={refs.descRef}
+              type="text"
+              required
+            ></input>
+            <input ref={refs.dataRef} type="date" required></input>
+            <select ref={refs.statusRef} required>
+              <option value="Pendente">Pendente</option>
+              <option value="Em Progresso">Em Progresso</option>
+              <option value="Concluída">Concluida</option>
+            </select>
+            <button onClick={() => handleEdit(tarefa.id)}>Editar</button>
+            <button onClick={() => context.removerTarefa(projetoId, tarefa.id)}>
+              Remover
+            </button>
+            <div id="modal-root"></div>
+            {showError && <ErrorModal />}
+          </div>
+        );
+      })}
     </div>
   );
 };

@@ -5,24 +5,40 @@ import { ErrorModal } from "../../../modals/ErrorModal";
 export const EditProjeto = ({ projetoId }: { projetoId: number }) => {
   const [showError, setShowErrorMessage] = useState(false);
   const context = useProjetos();
-  const nomeRef = useRef<HTMLInputElement>(null);
-  const descRef = useRef<HTMLInputElement>(null);
 
-  const handleEdit = () => {
-    if (nomeRef.current === null || descRef.current === null) return;
-    if (nomeRef.current.value !== "" && descRef.current.value !== "") {
+  const refsMap = useRef<{
+    [key: number]: {
+      nomeRef: React.RefObject<HTMLInputElement | null>;
+      descRef: React.RefObject<HTMLInputElement | null>;
+    };
+  }>({});
+
+  const getRefsForProjeto = (projetoId: number) => {
+    if (!refsMap.current[projetoId]) {
+      refsMap.current[projetoId] = {
+        nomeRef: useRef<HTMLInputElement>(null),
+        descRef: useRef<HTMLInputElement>(null),
+      };
+    }
+    return refsMap.current[projetoId];
+  };
+
+  const handleEdit = (projetoId: number) => {
+    const refs = getRefsForProjeto(projetoId);
+    if (refs.nomeRef.current === null || refs.descRef.current === null) return;
+    if (refs.nomeRef.current.value !== "" && refs.descRef.current.value !== "") {
       setShowErrorMessage(false);
-      const nome = nomeRef.current.value;
-      const desc = descRef.current.value;
+      const nome = refs.nomeRef.current.value;
+      const desc = refs.descRef.current.value;
 
-      if (nomeRef.current.value.trim().length < 3 || nomeRef.current.value.trim().length > 15 || descRef.current.value.trim().length < 10 || descRef.current.value.trim().length > 25) {
+      if (nome.trim().length < 3 || nome.trim().length > 15 || desc.trim().length < 10 || desc.trim().length > 25) {
         setShowErrorMessage(true);
         return;
       };
 
       context.editarProjeto(projetoId, nome, desc);
-      nomeRef.current.value = "";
-      descRef.current.value = "";
+      refs.nomeRef.current.value = "";
+      refs.descRef.current.value = "";
     } else {
       setShowErrorMessage(true);
     }
@@ -30,27 +46,28 @@ export const EditProjeto = ({ projetoId }: { projetoId: number }) => {
 
   return (
     <div className="edit-projeto">
-      {context.projetos.map((projeto) => (
-        <div key={projeto.id} className="projeto">
-          <input
-            placeholder={projeto.nome}
-            ref={nomeRef}
-            type="text"
-            required
-          ></input>
-          <input
-            placeholder={projeto.desc}
-            ref={descRef}
-            type="text"
-            required
-          ></input>
-          <button onClick={handleEdit}>Editar</button>
-          <div id="modal-root"></div>
-          {showError && (
-            <ErrorModal />
-          )}
-        </div>
-      ))}
+      {context.projetos.map((projeto) => {
+        const refs = getRefsForProjeto(projeto.id);
+        return (
+          <div key={projeto.id} className="projeto">
+            <input
+              placeholder={projeto.nome}
+              ref={refs.nomeRef}
+              type="text"
+              required
+            ></input>
+            <input
+              placeholder={projeto.desc}
+              ref={refs.descRef}
+              type="text"
+              required
+            ></input>
+            <button onClick={() => handleEdit(projeto.id)}>Editar</button>
+            <div id="modal-root"></div>
+            {showError && <ErrorModal />}
+          </div>
+        );
+      })}
     </div>
   );
 };
