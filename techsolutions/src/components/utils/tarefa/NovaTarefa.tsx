@@ -3,7 +3,7 @@ import { useProjetos } from "../../../context/Projetos";
 import { ErrorModal } from "../../../modals/ErrorModal";
 
 export const NovaTarefa = ({ projetoId }: { projetoId: number }) => {
-  const [showError, setShowErrorMessage] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const context = useProjetos();
   const nomeRef = useRef<HTMLInputElement>(null);
   const descRef = useRef<HTMLInputElement>(null);
@@ -17,31 +17,40 @@ export const NovaTarefa = ({ projetoId }: { projetoId: number }) => {
       dataRef.current === null ||
       statusRef.current === null
     ) return;
-    if (nomeRef.current.value !== "" && descRef.current.value !== "" && dataRef.current.value !== "" && statusRef.current.value !== "") {
-      setShowErrorMessage(false);
-      const nome = nomeRef.current.value;
-      const desc = descRef.current.value;
-      const data = dataRef.current.value;
-      const status = statusRef.current.value;
 
-      if (nomeRef.current.value.trim().length < 3 || nomeRef.current.value.trim().length > 15 || descRef.current.value.trim().length < 10 || descRef.current.value.trim().length > 25) {
-        setShowErrorMessage(true);
-        return;
-      };
+    const nome = nomeRef.current.value.trim();
+    const desc = descRef.current.value.trim();
+    const data = dataRef.current.value;
+    const status = statusRef.current.value;
 
-      if ((new Date(data) < new Date()) || (new Date(data).getFullYear() > (new Date().getFullYear() + 200))) {
-        setShowErrorMessage(true);
-        return;
-      };
-
-      context.adicionarTarefa(projetoId, nome, desc, data, status);
-      nomeRef.current.value = "";
-      descRef.current.value = "";
-      dataRef.current.value = "";
-      statusRef.current.value = "Pendente";
-    } else {
-      setShowErrorMessage(true);
+    if (!nome || !desc || !data || !status) {
+      setErrorMessage("Por favor, preencha todos os campos da tarefa.");
+      return;
     }
+
+    if (nome.length < 3 || nome.length > 15) {
+      setErrorMessage("O nome da tarefa deve ter entre 3 e 15 caracteres.");
+      return;
+    }
+
+    if (desc.length < 10 || desc.length > 25) {
+      setErrorMessage("A descrição da tarefa deve ter entre 10 e 25 caracteres.");
+      return;
+    }
+
+    const dataEscolhida = new Date(data);
+    const hoje = new Date();
+    if (dataEscolhida < hoje || dataEscolhida.getFullYear() > hoje.getFullYear() + 200) {
+      setErrorMessage("Data da tarefa inválida. Escolha uma data futura válida.");
+      return;
+    }
+
+    setErrorMessage("");
+    context.adicionarTarefa(projetoId, nome, desc, data, status);
+    nomeRef.current.value = "";
+    descRef.current.value = "";
+    dataRef.current.value = "";
+    statusRef.current.value = "Pendente";
   };
 
   return (
@@ -60,9 +69,8 @@ export const NovaTarefa = ({ projetoId }: { projetoId: number }) => {
         <option value="Concluída">Concluida</option>
       </select>
       <button onClick={handleAdd}>Adicionar Tarefa</button>
-      <div id="modal-root"></div>
-      {showError && (
-        <ErrorModal />
+      {errorMessage && (
+        <ErrorModal message={errorMessage} />
       )}
     </div>
   );

@@ -3,7 +3,7 @@ import { useProjetos } from "../../../context/Projetos";
 import { ErrorModal } from "../../../modals/ErrorModal";
 
 export const EditProjeto = () => {
-  const [showError, setShowErrorMessage] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const context = useProjetos();
 
   const refsMap = useRef<{
@@ -26,22 +26,29 @@ export const EditProjeto = () => {
   const handleEdit = (projetoId: number) => {
     const refs = getRefsForProjeto(projetoId);
     if (refs.nomeRef.current === null || refs.descRef.current === null) return;
-    if (refs.nomeRef.current.value !== "" && refs.descRef.current.value !== "") {
-      setShowErrorMessage(false);
-      const nome = refs.nomeRef.current.value;
-      const desc = refs.descRef.current.value;
 
-      if (nome.trim().length < 3 || nome.trim().length > 15 || desc.trim().length < 10 || desc.trim().length > 25) {
-        setShowErrorMessage(true);
-        return;
-      };
+    const nome = refs.nomeRef.current.value.trim();
+    const desc = refs.descRef.current.value.trim();
 
-      context.editarProjeto(projetoId, nome, desc);
-      refs.nomeRef.current.value = "";
-      refs.descRef.current.value = "";
-    } else {
-      setShowErrorMessage(true);
+    if (!nome || !desc) {
+      setErrorMessage("Por favor, preencha todos os campos do projeto.");
+      return;
     }
+
+    if (nome.length < 3 || nome.length > 15) {
+      setErrorMessage("O nome do projeto deve ter entre 3 e 15 caracteres.");
+      return;
+    }
+
+    if (desc.length < 10 || desc.length > 25) {
+      setErrorMessage("A descrição do projeto deve ter entre 10 e 25 caracteres.");
+      return;
+    }
+
+    setErrorMessage("");
+    context.editarProjeto(projetoId, nome, desc);
+    refs.nomeRef.current.value = "";
+    refs.descRef.current.value = "";
   };
 
   return (
@@ -63,8 +70,7 @@ export const EditProjeto = () => {
               required
             ></input>
             <button onClick={() => handleEdit(projeto.id)}>Editar</button>
-            <div id="modal-root"></div>
-            {showError && <ErrorModal />}
+            {errorMessage && <ErrorModal message={errorMessage} />}
           </div>
         );
       })}

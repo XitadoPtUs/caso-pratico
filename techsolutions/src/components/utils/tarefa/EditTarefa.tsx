@@ -3,7 +3,7 @@ import { useProjetos } from "../../../context/Projetos";
 import { ErrorModal } from "../../../modals/ErrorModal";
 
 export const EditTarefa = ({ projetoId }: { projetoId: number }) => {
-  const [showError, setShowErrorMessage] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const context = useProjetos();
 
   const refsMap = useRef<{
@@ -35,31 +35,40 @@ export const EditTarefa = ({ projetoId }: { projetoId: number }) => {
       refs.dataRef.current === null ||
       refs.statusRef.current === null
     ) return;
-    if (refs.nomeRef.current.value !== "" && refs.descRef.current.value !== "" && refs.dataRef.current.value !== "" && refs.statusRef.current.value !== "") {
-      setShowErrorMessage(false);
-      const nome = refs.nomeRef.current.value;
-      const desc = refs.descRef.current.value;
-      const data = refs.dataRef.current.value;
-      const status = refs.statusRef.current.value;
 
-      if (nome.trim().length < 3 || nome.trim().length > 15 || desc.trim().length < 10 || desc.trim().length > 25) {
-        setShowErrorMessage(true);
-        return;
-      };
+    const nome = refs.nomeRef.current.value.trim();
+    const desc = refs.descRef.current.value.trim();
+    const data = refs.dataRef.current.value;
+    const status = refs.statusRef.current.value;
 
-      if ((new Date(data) < new Date()) || (new Date(data).getFullYear() > 2200)) {
-        setShowErrorMessage(true);
-        return;
-      };
-
-      context.editarTarefa(projetoId, tarefaId, nome, desc, data, status);
-      refs.nomeRef.current.value = "";
-      refs.descRef.current.value = "";
-      refs.dataRef.current.value = "";
-      refs.statusRef.current.value = "Pendente";
-    } else {
-      setShowErrorMessage(true);
+    if (!nome || !desc || !data || !status) {
+      setErrorMessage("Por favor, preencha todos os campos da tarefa.");
+      return;
     }
+
+    if (nome.length < 3 || nome.length > 15) {
+      setErrorMessage("O nome da tarefa deve ter entre 3 e 15 caracteres.");
+      return;
+    }
+
+    if (desc.length < 10 || desc.length > 25) {
+      setErrorMessage("A descrição da tarefa deve ter entre 10 e 25 caracteres.");
+      return;
+    }
+
+    const dataEscolhida = new Date(data);
+    const hoje = new Date();
+    if (dataEscolhida < hoje || dataEscolhida.getFullYear() > 2200) {
+      setErrorMessage("Data da tarefa inválida. Escolha uma data futura válida.");
+      return;
+    }
+
+    setErrorMessage("");
+    context.editarTarefa(projetoId, tarefaId, nome, desc, data, status);
+    refs.nomeRef.current.value = "";
+    refs.descRef.current.value = "";
+    refs.dataRef.current.value = "";
+    refs.statusRef.current.value = "Pendente";
   };
 
   const projeto = context.projetos.find((p) => p.id === projetoId);
@@ -96,8 +105,7 @@ export const EditTarefa = ({ projetoId }: { projetoId: number }) => {
             <button onClick={() => context.removerTarefa(projetoId, tarefa.id)}>
               Remover
             </button>
-            <div id="modal-root"></div>
-            {showError && <ErrorModal />}
+            {errorMessage && <ErrorModal message={errorMessage} />}
           </div>
         );
       })}

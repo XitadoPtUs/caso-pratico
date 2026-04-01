@@ -1,9 +1,17 @@
-import {Component, ReactNode} from 'react';
+import { Component, ReactNode } from 'react';
 
-export class ErrorModal extends Component<{ children?: ReactNode }> {
+type ErrorModalProps = {
+  message?: string;
+};
+
+export class ErrorModal extends Component<ErrorModalProps> {
   render() {
+    const { message } = this.props;
     return (
-        <h2>Error</h2>
-    )
+      <div className="error-modal" role="alert" aria-live="assertive">
+        <h2>Erro</h2>
+        <p>{message ?? "Verifique os campos e tente novamente."}</p>
+      </div>
+    );
   }
 }
