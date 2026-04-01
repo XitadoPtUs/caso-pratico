@@ -15,6 +15,11 @@ export const EditProjeto = ({ projetoId }: { projetoId: number }) => {
       const nome = nomeRef.current.value;
       const desc = descRef.current.value;
 
+      if (nomeRef.current.value.trim().length < 3 || nomeRef.current.value.trim().length > 15 || descRef.current.value.trim().length < 10 || descRef.current.value.trim().length > 25) {
+        setShowErrorMessage(true);
+        return;
+      };
+
       context.editarProjeto(projetoId, nome, desc);
       nomeRef.current.value = "";
       descRef.current.value = "";

@@ -24,7 +24,12 @@ export const EditTarefa = ({ projetoId }: { projetoId: number }) => {
       const data = dataRef.current.value;
       const status = statusRef.current.value;
 
-      if (new Date(data) < new Date()) {
+      if (nomeRef.current.value.trim().length < 3 || nomeRef.current.value.trim().length > 15 || descRef.current.value.trim().length < 10 || descRef.current.value.trim().length > 25) {
+        setShowErrorMessage(true);
+        return;
+      };
+
+      if ((new Date(data) < new Date()) || (new Date(data).getFullYear() > 2200)) {
         setShowErrorMessage(true);
         return;
       };
@@ -53,16 +58,14 @@ export const EditTarefa = ({ projetoId }: { projetoId: number }) => {
             placeholder="Novo Nome"
             ref={nomeRef}
             type="text"
-            required
           ></input>
           <input
             placeholder="Nova Descrição"
             ref={descRef}
             type="text"
-            required
           ></input>
-          <input ref={dataRef} type="date" required></input>
-          <select ref={statusRef} required>
+          <input ref={dataRef} type="date"></input>
+          <select ref={statusRef}>
             <option value="Pendente">Pendente</option>
             <option value="Em Progresso">Em Progresso</option>
             <option value="Concluída">Concluida</option>

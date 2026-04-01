@@ -24,7 +24,12 @@ export const NovaTarefa = ({ projetoId }: { projetoId: number }) => {
       const data = dataRef.current.value;
       const status = statusRef.current.value;
 
-      if (new Date(data) < new Date()) {
+      if (nomeRef.current.value.trim().length < 3 || nomeRef.current.value.trim().length > 15 || descRef.current.value.trim().length < 10 || descRef.current.value.trim().length > 25) {
+        setShowErrorMessage(true);
+        return;
+      };
+
+      if ((new Date(data) < new Date()) || (new Date(data).getFullYear() > (new Date().getFullYear() + 200))) {
         setShowErrorMessage(true);
         return;
       };
