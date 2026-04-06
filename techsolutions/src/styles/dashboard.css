@@ -121,17 +121,14 @@
 @keyframes statBounce {
   0% {
     transform: scale(1);
-    color: var(--text-primary);
   }
 
   40% {
     transform: scale(1.25);
-    color: var(--accent-primary-hover);
   }
 
   100% {
     transform: scale(1);
-    color: var(--text-primary);
   }
 }
 
