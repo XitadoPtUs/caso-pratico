@@ -29,6 +29,14 @@ export const NovoProjeto = () => {
       return;
     }
 
+    const duplicado = context.projetos.some(
+      (p) => p.nome.toLowerCase() === nome.toLowerCase()
+    );
+    if (duplicado) {
+      setErrorMessage("Já existe um projeto com esse nome.");
+      return;
+    }
+
     setErrorMessage("");
     context.adicionarProjeto(nome, desc);
     nomeRef.current.value = "";
@@ -36,13 +44,19 @@ export const NovoProjeto = () => {
   };
 
   return (
-    <div className="novo-projeto">
-      <input placeholder="Nome" ref={nomeRef} type="text" required></input>
-      <input placeholder="Descrição" ref={descRef} type="text" required></input>
-      <button onClick={handleAdd}>Adicionar</button>
-      {errorMessage && (
-        <ErrorModal message={errorMessage} />
-      )}
+    <div className="new-project">
+      <h3 className="new-project-title">
+        <span className="new-project-title-icon">＋</span>
+        Novo Projeto
+      </h3>
+      <div className="new-project-form">
+        <input placeholder="Nome do projeto" ref={nomeRef} type="text" required />
+        <input placeholder="Descrição do projeto" ref={descRef} type="text" required />
+        <button className="new-project-btn" onClick={handleAdd}>
+          Criar Projeto
+        </button>
+      </div>
+      {errorMessage && <ErrorModal message={errorMessage} />}
     </div>
   );
 };

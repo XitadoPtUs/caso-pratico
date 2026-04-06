@@ -4,6 +4,7 @@ import { ErrorModal } from "../../../modals/ErrorModal";
 
 export const EditTarefa = ({ projetoId }: { projetoId: number }) => {
   const [errorMessage, setErrorMessage] = useState("");
+  const [editingId, setEditingId] = useState<number | null>(null);
   const context = useProjetos();
 
   const refsMap = useRef<{
@@ -63,58 +64,171 @@ export const EditTarefa = ({ projetoId }: { projetoId: number }) => {
       return;
     }
 
+    const projetoAtual = context.projetos.find((p) => p.id === projetoId);
+    const duplicado = projetoAtual?.tarefas.some(
+      (t) => t.id !== tarefaId && t.nome.toLowerCase() === nome.toLowerCase()
+    );
+    if (duplicado) {
+      setErrorMessage("Já existe uma tarefa com esse nome neste projeto.");
+      return;
+    }
+
     setErrorMessage("");
     context.editarTarefa(projetoId, tarefaId, nome, desc, data, status);
     refs.nomeRef.current.value = "";
     refs.descRef.current.value = "";
     refs.dataRef.current.value = "";
     refs.statusRef.current.value = "Pendente";
+    setEditingId(null);
   };
 
   const trocarStatus = (tarefaId: number) => {
     const projeto = context.projetos.find((p) => p.id === projetoId);
     const tarefa = projeto?.tarefas.find((t) => t.id === tarefaId);
     if (!projeto || !tarefa) return;
-    const novoStatus = tarefa.status === "Pendente" ? "Em Progresso" : tarefa.status === "Em Progresso" ? "Concluída" : "Pendente";
-    context.editarTarefa(projetoId, tarefaId, tarefa.nome, tarefa.desc, tarefa.data, novoStatus);
+    const novoStatus =
+      tarefa.status === "Pendente"
+        ? "Em Progresso"
+        : tarefa.status === "Em Progresso"
+          ? "Concluída"
+          : "Pendente";
+    context.editarTarefa(
+      projetoId,
+      tarefaId,
+      tarefa.nome,
+      tarefa.desc,
+      tarefa.data,
+      novoStatus
+    );
+  };
+
+  const getStatusClass = (status: string) => {
+    switch (status) {
+      case "Pendente":
+        return "pendente";
+      case "Em Progresso":
+        return "em-progresso";
+      case "Concluída":
+        return "concluida";
+      default:
+        return "pendente";
+    }
+  };
+
+  const formatDate = (dateStr: string) => {
+    try {
+      const date = new Date(dateStr);
+      return date.toLocaleDateString("pt-PT", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      });
+    } catch {
+      return dateStr;
+    }
   };
 
   const projeto = context.projetos.find((p) => p.id === projetoId);
   const tarefas = projeto?.tarefas || [];
 
+  if (tarefas.length === 0) {
+    return (
+      <div className="task-list-empty">
+        <div className="task-list-empty-icon">📝</div>
+        <div>Nenhuma tarefa criada</div>
+      </div>
+    );
+  }
+
   return (
-    <div className="edit-tarefa">
+    <div>
       {tarefas.map((tarefa) => {
         const refs = getRefsForTarefa(tarefa.id);
+        const statusKey = getStatusClass(tarefa.status);
+        const isEditing = editingId === tarefa.id;
+
         return (
-          <div key={tarefa.id} className="tarefa">
-            <span>
-              {tarefa.nome} - {tarefa.status}
-            </span>
-            <input
-              placeholder="Novo Nome"
-              ref={refs.nomeRef}
-              type="text"
-              required
-            ></input>
-            <input
-              placeholder="Nova Descrição"
-              ref={refs.descRef}
-              type="text"
-              required
-            ></input>
-            <input ref={refs.dataRef} type="date" required></input>
-            <select ref={refs.statusRef} required>
-              <option value="Pendente">Pendente</option>
-              <option value="Em Progresso">Em Progresso</option>
-              <option value="Concluída">Concluida</option>
-            </select>
-            <button onClick={() => handleEdit(tarefa.id)}>Editar</button>
-            <button onClick={() => context.removerTarefa(projetoId, tarefa.id)}>
-              Remover
-            </button>
-            <button onClick={() => trocarStatus(tarefa.id)}>Alterar Status</button>
-            {errorMessage && <ErrorModal message={errorMessage} />}
+          <div
+            key={tarefa.id}
+            className={`task-item task-item--${statusKey}`}
+          >
+            <div className="task-item-header">
+              <span className="task-item-name">{tarefa.nome}</span>
+              <span
+                className={`task-item-status task-item-status--${statusKey}`}
+                onClick={() => trocarStatus(tarefa.id)}
+                title="Clique para alterar status"
+              >
+                {tarefa.status}
+              </span>
+            </div>
+
+            {tarefa.desc && (
+              <p className="task-item-desc">{tarefa.desc}</p>
+            )}
+
+            <div className="task-item-meta">
+              <span className="task-item-date">
+                {formatDate(tarefa.data)}
+              </span>
+            </div>
+
+            <div className="task-item-actions">
+              <button
+                className="task-item-btn task-item-btn--edit"
+                onClick={() =>
+                  setEditingId(isEditing ? null : tarefa.id)
+                }
+              >
+                {isEditing ? '✕ Fechar' : '✏️ Editar'}
+              </button>
+              <button
+                className="task-item-btn task-item-btn--remove"
+                onClick={() =>
+                  context.removerTarefa(projetoId, tarefa.id)
+                }
+              >
+                🗑 Remover
+              </button>
+              <button
+                className="task-item-btn task-item-btn--status"
+                onClick={() => trocarStatus(tarefa.id)}
+              >
+                ↻ Status
+              </button>
+            </div>
+
+            {isEditing && (
+              <div className="task-item-edit-form">
+                <input
+                  placeholder="Novo Nome"
+                  ref={refs.nomeRef}
+                  type="text"
+                  required
+                />
+                <input
+                  placeholder="Nova Descrição"
+                  ref={refs.descRef}
+                  type="text"
+                  required
+                />
+                <input ref={refs.dataRef} type="date" required />
+                <select ref={refs.statusRef} required>
+                  <option value="Pendente">Pendente</option>
+                  <option value="Em Progresso">Em Progresso</option>
+                  <option value="Concluída">Concluída</option>
+                </select>
+                <div className="task-item-edit-actions">
+                  <button
+                    className="new-task-submit"
+                    onClick={() => handleEdit(tarefa.id)}
+                  >
+                    Guardar
+                  </button>
+                </div>
+                {errorMessage && <ErrorModal message={errorMessage} />}
+              </div>
+            )}
           </div>
         );
       })}

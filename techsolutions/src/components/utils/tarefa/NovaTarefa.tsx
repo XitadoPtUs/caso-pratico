@@ -4,6 +4,7 @@ import { ErrorModal } from "../../../modals/ErrorModal";
 
 export const NovaTarefa = ({ projetoId }: { projetoId: number }) => {
   const [errorMessage, setErrorMessage] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
   const context = useProjetos();
   const nomeRef = useRef<HTMLInputElement>(null);
   const descRef = useRef<HTMLInputElement>(null);
@@ -45,32 +46,60 @@ export const NovaTarefa = ({ projetoId }: { projetoId: number }) => {
       return;
     }
 
+    const projeto = context.projetos.find((p) => p.id === projetoId);
+    const duplicado = projeto?.tarefas.some(
+      (t) => t.nome.toLowerCase() === nome.toLowerCase()
+    );
+    if (duplicado) {
+      setErrorMessage("Já existe uma tarefa com esse nome neste projeto.");
+      return;
+    }
+
     setErrorMessage("");
     context.adicionarTarefa(projetoId, nome, desc, data, status);
     nomeRef.current.value = "";
     descRef.current.value = "";
     dataRef.current.value = "";
     statusRef.current.value = "Pendente";
+    setIsOpen(false);
   };
 
   return (
-    <div className="nova-tarefa">
-      <input
-        placeholder="Nova Tarefa"
-        ref={nomeRef}
-        type="text"
-        required
-      ></input>
-      <input placeholder="Desc" ref={descRef} type="text" required></input>
-      <input placeholder="Data" ref={dataRef} type="date" required></input>
-      <select ref={statusRef} required>
-        <option value="Pendente">Pendente</option>
-        <option value="Em Progresso">Em Progresso</option>
-        <option value="Concluída">Concluida</option>
-      </select>
-      <button onClick={handleAdd}>Adicionar Tarefa</button>
-      {errorMessage && (
-        <ErrorModal message={errorMessage} />
+    <div className="new-task">
+      {!isOpen ? (
+        <button
+          className="new-task-toggle"
+          onClick={() => setIsOpen(true)}
+        >
+          ＋ Adicionar Tarefa
+        </button>
+      ) : (
+        <>
+          <div className="new-task-form">
+            <input
+              placeholder="Nome da tarefa"
+              ref={nomeRef}
+              type="text"
+              required
+            />
+            <input
+              placeholder="Descrição"
+              ref={descRef}
+              type="text"
+              required
+            />
+            <input ref={dataRef} type="date" required />
+            <select ref={statusRef} required>
+              <option value="Pendente">Pendente</option>
+              <option value="Em Progresso">Em Progresso</option>
+              <option value="Concluída">Concluída</option>
+            </select>
+            <button className="new-task-submit" onClick={handleAdd}>
+              Criar Tarefa
+            </button>
+          </div>
+          {errorMessage && <ErrorModal message={errorMessage} />}
+        </>
       )}
     </div>
   );

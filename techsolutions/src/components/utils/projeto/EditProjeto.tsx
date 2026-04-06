@@ -1,34 +1,21 @@
-import { RefObject, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useProjetos } from "../../../context/Projetos";
 import { ErrorModal } from "../../../modals/ErrorModal";
 
-export const EditProjeto = () => {
+export const EditProjeto = ({ projetoId }: { projetoId: number }) => {
   const [errorMessage, setErrorMessage] = useState("");
   const context = useProjetos();
+  const nomeRef = useRef<HTMLInputElement>(null);
+  const descRef = useRef<HTMLInputElement>(null);
 
-  const refsMap = useRef<{
-    [key: number]: {
-      nomeRef: RefObject<HTMLInputElement | null>;
-      descRef: RefObject<HTMLInputElement | null>;
-    };
-  }>({});
+  const projeto = context.projetos.find((p) => p.id === projetoId);
+  if (!projeto) return null;
 
-  const getRefsForProjeto = (projetoId: number) => {
-    if (!refsMap.current[projetoId]) {
-      refsMap.current[projetoId] = {
-        nomeRef: { current: null },
-        descRef: { current: null },
-      };
-    }
-    return refsMap.current[projetoId];
-  };
+  const handleEdit = () => {
+    if (nomeRef.current === null || descRef.current === null) return;
 
-  const handleEdit = (projetoId: number) => {
-    const refs = getRefsForProjeto(projetoId);
-    if (refs.nomeRef.current === null || refs.descRef.current === null) return;
-
-    const nome = refs.nomeRef.current.value.trim();
-    const desc = refs.descRef.current.value.trim();
+    const nome = nomeRef.current.value.trim();
+    const desc = descRef.current.value.trim();
 
     if (!nome || !desc) {
       setErrorMessage("Por favor, preencha todos os campos do projeto.");
@@ -45,35 +32,40 @@ export const EditProjeto = () => {
       return;
     }
 
+    const duplicado = context.projetos.some(
+      (p) => p.id !== projetoId && p.nome.toLowerCase() === nome.toLowerCase()
+    );
+    if (duplicado) {
+      setErrorMessage("Já existe um projeto com esse nome.");
+      return;
+    }
+
     setErrorMessage("");
     context.editarProjeto(projetoId, nome, desc);
-    refs.nomeRef.current.value = "";
-    refs.descRef.current.value = "";
+    nomeRef.current.value = "";
+    descRef.current.value = "";
   };
 
   return (
-    <div className="edit-projeto">
-      {context.projetos.map((projeto) => {
-        const refs = getRefsForProjeto(projeto.id);
-        return (
-          <div key={projeto.id} className="projeto">
-            <input
-              placeholder={projeto.nome}
-              ref={refs.nomeRef}
-              type="text"
-              required
-            ></input>
-            <input
-              placeholder={projeto.desc}
-              ref={refs.descRef}
-              type="text"
-              required
-            ></input>
-            <button onClick={() => handleEdit(projeto.id)}>Editar</button>
-            {errorMessage && <ErrorModal message={errorMessage} />}
-          </div>
-        );
-      })}
+    <div className="edit-project">
+      <div className="edit-project-form">
+        <input
+          placeholder={projeto.nome}
+          ref={nomeRef}
+          type="text"
+          required
+        />
+        <input
+          placeholder={projeto.desc}
+          ref={descRef}
+          type="text"
+          required
+        />
+        <button className="edit-project-btn" onClick={handleEdit}>
+          ✏️ Editar
+        </button>
+      </div>
+      {errorMessage && <ErrorModal message={errorMessage} />}
     </div>
   );
 };
