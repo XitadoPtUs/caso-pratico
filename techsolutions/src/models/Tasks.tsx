@@ -1,12 +1,12 @@
 export class Task {
-  id: number;
+  id: string | number;
   nome: string;
   desc: string;
   data: string;
   status: string;
 
   constructor(
-    id: number,
+    id: string | number,
     nome: string,
     desc: string,
     data: string,

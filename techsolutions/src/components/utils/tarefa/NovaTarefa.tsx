@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { useProjetos } from "../../../context/Projetos";
 import { ErrorModal } from "../../../modals/ErrorModal";
 
-export const NovaTarefa = ({ projetoId }: { projetoId: number }) => {
+export const NovaTarefa = ({ projetoId }: { projetoId: string | number }) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const context = useProjetos();

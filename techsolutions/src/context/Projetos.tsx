@@ -1,27 +1,27 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import axios from "axios";
 import { Project } from "../models/Project";
-import { Task } from "../models/Task";
+import { Task } from "../models/Tasks";
 
-let idProjeto: number = 0;
-let idTarefa: number = 0;
+const API_URL = "http://localhost:3001/projetos";
 
 type ProjetosContextType = {
   projetos: Project[];
   adicionarProjeto: (nome: string, desc: string) => void;
-  removerProjeto: (id: number) => void;
-  editarProjeto: (id: number, nome: string, desc: string) => void;
+  removerProjeto: (id: string | number) => void;
+  editarProjeto: (id: string | number, nome: string, desc: string) => void;
   progressoConcluido: (projeto: Project) => number;
   adicionarTarefa: (
-    projetoId: number,
+    projetoId: string | number,
     nome: string,
     desc: string,
     data: string,
     status: string,
   ) => void;
-  removerTarefa: (projetoId: number, tarefaId: number) => void;
+  removerTarefa: (projetoId: string | number, tarefaId: string | number) => void;
   editarTarefa: (
-    projetoId: number,
-    tarefaId: number,
+    projetoId: string | number,
+    tarefaId: string | number,
     nome: string,
     desc: string,
     data: string,
@@ -46,35 +46,42 @@ export const ProjetosProvider = ({ children }: { children: ReactNode }) => {
   const [projetos, setProjetos] = useState<Project[]>([]);
 
   useEffect(() => {
-    localStorage.setItem('projetos', JSON.stringify(projetos));
-  }, [projetos]);
-
-  useEffect(() => {
-    const projetosSalvos = localStorage.getItem('projetos');
-
-    if (projetosSalvos) {
-      setProjetos(JSON.parse(projetosSalvos));
-    }
+    axios.get(API_URL)
+      .then(response => {
+        setProjetos(response.data);
+      })
+      .catch(error => console.error("Erro ao carregar projetos:", error));
   }, []);
 
   const adicionarProjeto = (nome: string, desc: string) => {
-    const novoProjeto = new Project(idProjeto++, nome, desc);
-    setProjetos((prev) => [...prev, novoProjeto]);
+    const id = Date.now().toString();
+    const novoProjeto = new Project(id, nome, desc);
+
+    axios.post(API_URL, novoProjeto)
+      .then(response => {
+        setProjetos((prev) => [...prev, response.data]);
+      })
+      .catch(console.error);
   };
 
-  const removerProjeto = (id: number) => {
+  const removerProjeto = (id: string | number) => {
     setProjetos((prev) => prev.filter((projeto) => projeto.id !== id));
+
+    axios.delete(`${API_URL}/${id}`).catch(console.error);
   };
 
-  const editarProjeto = (id: number, nome: string, desc: string) => {
-    setProjetos((prev) =>
-      prev.map((projeto) => {
+  const editarProjeto = (id: string | number, nome: string, desc: string) => {
+    setProjetos((prev) => {
+      const projetosAtualizados = prev.map((projeto) => {
         if (projeto.id === id) {
-          return new Project(projeto.id, nome, desc, projeto.tarefas);
+          const atualizado = new Project(projeto.id, nome, desc, projeto.tarefas);
+          axios.put(`${API_URL}/${id}`, atualizado).catch(console.error);
+          return atualizado;
         }
         return projeto;
-      }),
-    );
+      });
+      return projetosAtualizados;
+    });
   };
 
   const progressoConcluido = (projeto: Project) => {
@@ -86,55 +93,61 @@ export const ProjetosProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const adicionarTarefa = (
-    projetoId: number,
+    projetoId: string | number,
     nome: string,
     desc: string,
     data: string,
     status: string,
   ) => {
-    setProjetos((prev) =>
-      prev.map((projeto) => {
+    setProjetos((prev) => {
+      const projetosAtualizados = prev.map((projeto) => {
         if (projeto.id === projetoId) {
-          const novaTarefa = new Task(idTarefa++, nome, desc, data, status);
-          return new Project(projeto.id, projeto.nome, projeto.desc, [
+          const novaTarefa = new Task(Date.now(), nome, desc, data, status);
+          const projetoAtualizado = new Project(projeto.id, projeto.nome, projeto.desc, [
             ...projeto.tarefas,
             novaTarefa,
           ]);
+          axios.put(`${API_URL}/${projetoId}`, projetoAtualizado).catch(console.error);
+          return projetoAtualizado;
         }
         return projeto;
-      }),
-    );
+      });
+      return projetosAtualizados;
+    });
   };
 
-  const removerTarefa = (projetoId: number, tarefaId: number) => {
-    setProjetos((prev) =>
-      prev.map((projeto) => {
+  const removerTarefa = (projetoId: string | number, tarefaId: string | number) => {
+    setProjetos((prev) => {
+      const projetosAtualizados = prev.map((projeto) => {
         if (projeto.id === projetoId) {
           const tarefasAtualizadas = projeto.tarefas.filter(
             (tarefa) => tarefa.id !== tarefaId,
           );
-          return new Project(
+          const projetoAtualizado = new Project(
             projeto.id,
             projeto.nome,
             projeto.desc,
             tarefasAtualizadas,
           );
+          axios.put(`${API_URL}/${projetoId}`, projetoAtualizado).catch(console.error);
+          return projetoAtualizado;
         }
         return projeto;
-      }),
-    );
+      });
+      return projetosAtualizados;
+    });
   };
 
   const editarTarefa = (
-    projetoId: number,
-    tarefaId: number,
+    projetoId: string | number,
+    tarefaId: string | number,
     nome: string,
     desc: string,
     data: string,
     status: string,
   ) => {
-    setProjetos((prev) =>
-      prev.map((projeto) => {
+    setProjetos((prev) => {
+      const projetosAtualizados = prev.map((projeto) => {
         if (projeto.id === projetoId) {
           const tarefasAtualizadas = projeto.tarefas.map((tarefa) => {
             if (tarefa.id === tarefaId) {
@@ -142,16 +155,19 @@ export const ProjetosProvider = ({ children }: { children: ReactNode }) => {
             }
             return tarefa;
           });
-          return new Project(
+          const projetoAtualizado = new Project(
             projeto.id,
             projeto.nome,
             projeto.desc,
             tarefasAtualizadas,
           );
+          axios.put(`${API_URL}/${projetoId}`, projetoAtualizado).catch(console.error);
+          return projetoAtualizado;
         }
         return projeto;
-      }),
-    );
+      });
+      return projetosAtualizados;
+    });
   };
 
   return (

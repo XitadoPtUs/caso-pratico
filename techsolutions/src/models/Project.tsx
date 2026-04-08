@@ -1,12 +1,12 @@
-import { Task } from "./Task";
+import { Task } from "./Tasks";
 
 export class Project {
-  id: number;
+  id: string | number;
   nome: string;
   desc: string;
   tarefas: Task[];
 
-  constructor(id: number, nome: string, desc: string, tarefas: Task[] = []) {
+  constructor(id: string | number, nome: string, desc: string, tarefas: Task[] = []) {
     this.id = id;
     this.nome = nome;
     this.desc = desc;

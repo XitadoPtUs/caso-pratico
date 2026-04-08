@@ -2,13 +2,13 @@ import { RefObject, useRef, useState } from "react";
 import { useProjetos } from "../../../context/Projetos";
 import { ErrorModal } from "../../../modals/ErrorModal";
 
-export const EditTarefa = ({ projetoId }: { projetoId: number }) => {
+export const EditTarefa = ({ projetoId }: { projetoId: string | number }) => {
   const [errorMessage, setErrorMessage] = useState("");
-  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingId, setEditingId] = useState<string | number | null>(null);
   const context = useProjetos();
 
   const refsMap = useRef<{
-    [key: number]: {
+    [key: string]: {
       nomeRef: RefObject<HTMLInputElement | null>;
       descRef: RefObject<HTMLInputElement | null>;
       dataRef: RefObject<HTMLInputElement | null>;
@@ -16,7 +16,7 @@ export const EditTarefa = ({ projetoId }: { projetoId: number }) => {
     };
   }>({});
 
-  const getRefsForTarefa = (tarefaId: number) => {
+  const getRefsForTarefa = (tarefaId: string | number) => {
     if (!refsMap.current[tarefaId]) {
       refsMap.current[tarefaId] = {
         nomeRef: { current: null },
@@ -28,7 +28,7 @@ export const EditTarefa = ({ projetoId }: { projetoId: number }) => {
     return refsMap.current[tarefaId];
   };
 
-  const handleEdit = (tarefaId: number) => {
+  const handleEdit = (tarefaId: string | number) => {
     const refs = getRefsForTarefa(tarefaId);
     if (
       refs.nomeRef.current === null ||
@@ -82,7 +82,7 @@ export const EditTarefa = ({ projetoId }: { projetoId: number }) => {
     setEditingId(null);
   };
 
-  const trocarStatus = (tarefaId: number) => {
+  const trocarStatus = (tarefaId: string | number) => {
     const projeto = context.projetos.find((p) => p.id === projetoId);
     const tarefa = projeto?.tarefas.find((t) => t.id === tarefaId);
     if (!projeto || !tarefa) return;

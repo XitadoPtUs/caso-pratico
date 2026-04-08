@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { useProjetos } from "../../../context/Projetos";
 import { ErrorModal } from "../../../modals/ErrorModal";
 
-export const EditProjeto = ({ projetoId }: { projetoId: number }) => {
+export const EditProjeto = ({ projetoId }: { projetoId: string | number }) => {
   const [errorMessage, setErrorMessage] = useState("");
   const context = useProjetos();
   const nomeRef = useRef<HTMLInputElement>(null);
