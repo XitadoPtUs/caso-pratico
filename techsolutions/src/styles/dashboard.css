@@ -15,12 +15,12 @@
 .dashboard-title {
   font-size: 2.5rem;
   font-weight: 800;
-  background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-accent) 50%, var(--accent-primary) 100%);
+  background: linear-gradient(170deg, var(--accent-secondary) 0%, var(--text-accent) 50%, var(--accent-primary) 100%);
   background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  animation: shimmer 4s linear infinite;
+  animation: shimmer 7s linear infinite;
   letter-spacing: -0.03em;
   margin-bottom: var(--space-md);
 }
