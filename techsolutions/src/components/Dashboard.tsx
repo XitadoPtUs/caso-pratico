@@ -19,10 +19,10 @@ export const Dashboard = () => {
   );
 
   const getProgressClass = (value: number) => {
-    if (value === 100) return "project-card-progress-fill--complete";
-    if (value >= 60) return "project-card-progress-fill--high";
-    if (value >= 30) return "project-card-progress-fill--mid";
-    return "project-card-progress-fill--low";
+    if (value === 100) return "project-card-progress-fill-complete";
+    if (value >= 60) return "project-card-progress-fill-high";
+    if (value >= 30) return "project-card-progress-fill-mid";
+    return "project-card-progress-fill-low";
   };
 
   return (
@@ -36,7 +36,7 @@ export const Dashboard = () => {
 
       <section className="dashboard-stats">
         <div className="dashboard-stat-card">
-          <div className="dashboard-stat-icon dashboard-stat-icon--projects">
+          <div className="dashboard-stat-icon dashboard-stat-icon-projects">
             📁
           </div>
           <div className="dashboard-stat-info">
@@ -47,7 +47,7 @@ export const Dashboard = () => {
           </div>
         </div>
         <div className="dashboard-stat-card">
-          <div className="dashboard-stat-icon dashboard-stat-icon--tasks">
+          <div className="dashboard-stat-icon dashboard-stat-icon-tasks">
             📋
           </div>
           <div className="dashboard-stat-info">
@@ -56,7 +56,7 @@ export const Dashboard = () => {
           </div>
         </div>
         <div className="dashboard-stat-card">
-          <div className="dashboard-stat-icon dashboard-stat-icon--completed">
+          <div className="dashboard-stat-icon dashboard-stat-icon-completed">
             ✅
           </div>
           <div className="dashboard-stat-info">
@@ -97,7 +97,7 @@ export const Dashboard = () => {
                     </div>
                     <div className="project-card-actions">
                       <button
-                        className="project-card-btn project-card-btn--danger"
+                        className="project-card-btn project-card-btn-danger"
                         onClick={() => context.removerProjeto(projeto.id)}
                         title="Remover projeto"
                       >

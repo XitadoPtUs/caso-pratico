@@ -76,17 +76,17 @@
   flex-shrink: 0;
 }
 
-.dashboard-stat-icon--projects {
+.dashboard-stat-icon-projects {
   background: var(--accent-primary-glow);
   color: var(--accent-primary-hover);
 }
 
-.dashboard-stat-icon--tasks {
+.dashboard-stat-icon-tasks {
   background: var(--accent-info-soft);
   color: var(--accent-info);
 }
 
-.dashboard-stat-icon--completed {
+.dashboard-stat-icon-completed {
   background: var(--accent-success-soft);
   color: var(--accent-success);
 }

@@ -150,12 +150,12 @@ export const EditTarefa = ({ projetoId }: { projetoId: string | number }) => {
         return (
           <div
             key={tarefa.id}
-            className={`task-item task-item--${statusKey}`}
+            className={`task-item task-item-${statusKey}`}
           >
             <div className="task-item-header">
               <span className="task-item-name">{tarefa.nome}</span>
               <span
-                className={`task-item-status task-item-status--${statusKey}`}
+                className={`task-item-status task-item-status-${statusKey}`}
                 onClick={() => trocarStatus(tarefa.id)}
                 title="Clique para alterar status"
               >
@@ -175,7 +175,7 @@ export const EditTarefa = ({ projetoId }: { projetoId: string | number }) => {
 
             <div className="task-item-actions">
               <button
-                className="task-item-btn task-item-btn--edit"
+                className="task-item-btn task-item-btn-edit"
                 onClick={() =>
                   setEditingId(isEditing ? null : tarefa.id)
                 }
@@ -183,18 +183,12 @@ export const EditTarefa = ({ projetoId }: { projetoId: string | number }) => {
                 {isEditing ? '✕ Fechar' : '✏️ Editar'}
               </button>
               <button
-                className="task-item-btn task-item-btn--remove"
+                className="task-item-btn task-item-btn-remove"
                 onClick={() =>
                   context.removerTarefa(projetoId, tarefa.id)
                 }
               >
                 🗑 Remover
-              </button>
-              <button
-                className="task-item-btn task-item-btn--status"
-                onClick={() => trocarStatus(tarefa.id)}
-              >
-                ↻ Status
               </button>
             </div>
 

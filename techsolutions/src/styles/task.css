@@ -19,27 +19,27 @@
   background: var(--bg-card-hover);
 }
 
-.task-item--pendente {
+.task-item-pendente {
   border-left-color: var(--accent-warning);
 }
 
-.task-item--pendente:hover {
+.task-item-pendente:hover {
   border-left-color: var(--accent-warning);
 }
 
-.task-item--em-progresso {
+.task-item-em-progresso {
   border-left-color: var(--accent-info);
 }
 
-.task-item--em-progresso:hover {
+.task-item-em-progresso:hover {
   border-left-color: var(--accent-info);
 }
 
-.task-item--concluida {
+.task-item-concluida {
   border-left-color: var(--accent-success);
 }
 
-.task-item--concluida:hover {
+.task-item-concluida:hover {
   border-left-color: var(--accent-success);
 }
 
@@ -78,17 +78,17 @@
   transform: scale(1.05);
 }
 
-.task-item-status--pendente {
+.task-item-status-pendente {
   background: var(--accent-warning-soft);
   color: var(--accent-warning);
 }
 
-.task-item-status--em-progresso {
+.task-item-status-em-progresso {
   background: var(--accent-info-soft);
   color: var(--accent-info);
 }
 
-.task-item-status--concluida {
+.task-item-status-concluida {
   background: var(--accent-success-soft);
   color: var(--accent-success);
 }
@@ -131,42 +131,21 @@
   padding: 0.35rem 0.75rem;
   border-radius: var(--radius-sm);
   font-weight: 500;
-}
-
-.task-item-btn--edit {
-  background: var(--bg-input);
+    background: var(--bg-input);
   color: var(--text-accent);
   border: 1px solid var(--border-default);
 }
 
-.task-item-btn--edit:hover {
+.task-item-btn-edit:hover {
   background: var(--accent-primary-glow);
   border-color: var(--accent-primary);
   color: var(--accent-primary-hover);
 }
 
-.task-item-btn--remove {
-  background: transparent;
-  color: var(--text-muted);
-  border: 1px solid transparent;
-}
-
-.task-item-btn--remove:hover {
+.task-item-btn-remove:hover {
   background: var(--accent-danger-soft);
   color: var(--accent-danger);
   border-color: rgba(239, 68, 68, 0.2);
-}
-
-.task-item-btn--status {
-  background: transparent;
-  color: var(--text-muted);
-  border: 1px solid var(--border-default);
-}
-
-.task-item-btn--status:hover {
-  background: var(--bg-elevated);
-  color: var(--text-primary);
-  border-color: var(--border-hover);
 }
 
 .task-item-edit-form {
