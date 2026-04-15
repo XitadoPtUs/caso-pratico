@@ -1,73 +1,93 @@
-# React + TypeScript + Vite
+# TechSolutions
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplicacao web para gestao de projetos e tarefas, desenvolvida com React, TypeScript e Vite. A interface permite criar projetos, acompanhar progresso e gerir tarefas com persistencia local via `json-server`.
 
-Currently, two official plugins are available:
+## Funcionalidades
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Criacão, edicão e remocão de projetos.
+- Criacão, edicão e remocão de tarefas por projeto.
+- Alteracão rapida do estado da tarefa entre `Pendente`, `Em Progresso` e `Concluída`.
+- Calculo automatico do progresso de cada projeto.
+- Validacões de formulários para evitar nomes duplicados, campos vazios e datas inválidas.
 
-## React Compiler
+## Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- `React 19`
+- `TypeScript`
+- `Vite`
+- `Jest` + `Testing Library`
+- `Axios`
+- `json-server`
 
-## Expanding the ESLint configuration
+## Requisitos
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- `Node.js` 20+.
+- `npm`.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Como executar
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+Instale as dependencias:
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Inicie a API:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run server
 ```
+
+Noutro terminal, inicie o frontend:
+
+```bash
+npm run dev
+```
+
+A aplicacão espera a API em `http://localhost:3001/projetos`.
+
+## Scripts
+
+- `npm run dev`: inicia o Vite em modo de desenvolvimento.
+- `npm run build`: gera o build de producão.
+- `npm run preview`: faz preview local do build.
+- `npm run lint`: executa o ESLint.
+- `npm run test`: executa a suite de testes.
+- `npm run server`: sobe o `json-server` com base em `db.json`.
+
+## Testes
+
+A suite atual cobre:
+
+- Modelos `Project` e `Task`.
+- Regras do contexto `ProjetosProvider`, incluindo carregamento inicial, CRUD de projetos e CRUD de tarefas.
+- Validacões do formulário `NovoProjeto`.
+
+Para correr os testes:
+
+```bash
+npm test -- --runInBand
+```
+
+## Estrutura principal
+
+```text
+src/
+  components/       componentes de interface e formulários
+  context/          estado global de projetos e tarefas
+  models/           modelos Project e Task
+  modals/           mensagens de erro
+  styles/           estilos por área da aplicacão
+testes/             testes unitários e de integracão
+db.json             base usada pelo json-server
+```
+
+## Regras de negócio implementadas
+
+- Nome do projeto: entre 3 e 15 caracteres.
+- Descricão do projeto: entre 10 e 25 caracteres.
+- Nome da tarefa: entre 3 e 15 caracteres.
+- Descricão da tarefa: entre 10 e 25 caracteres.
+- Não são permitidos nomes duplicados dentro do mesmo contexto:
+  projeto por nome global e tarefa por nome dentro do projeto.
+- Datas de tarefas precisam ser futuras e validas.
