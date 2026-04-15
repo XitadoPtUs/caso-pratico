@@ -4,11 +4,11 @@ Aplicacao web para gestao de projetos e tarefas, desenvolvida com React, TypeScr
 
 ## Funcionalidades
 
-- Criacão, edicão e remocão de projetos.
-- Criacão, edicão e remocão de tarefas por projeto.
-- Alteracão rapida do estado da tarefa entre `Pendente`, `Em Progresso` e `Concluída`.
+- Criação, edição e remoção de projetos.
+- Criação, edição e remoção de tarefas por projeto.
+- Alteração rapida do estado da tarefa entre `Pendente`, `Em Progresso` e `Concluída`.
 - Calculo automatico do progresso de cada projeto.
-- Validacões de formulários para evitar nomes duplicados, campos vazios e datas inválidas.
+- Validações de formulários para evitar nomes duplicados, campos vazios e datas inválidas.
 
 ## Stack
 
@@ -26,7 +26,7 @@ Aplicacao web para gestao de projetos e tarefas, desenvolvida com React, TypeScr
 
 ## Como executar
 
-Instale as dependencias:
+Instale as dependências:
 
 ```bash
 npm install
@@ -49,7 +49,7 @@ A aplicacão espera a API em `http://localhost:3001/projetos`.
 ## Scripts
 
 - `npm run dev`: inicia o Vite em modo de desenvolvimento.
-- `npm run build`: gera o build de producão.
+- `npm run build`: gera o build de produção.
 - `npm run preview`: faz preview local do build.
 - `npm run lint`: executa o ESLint.
 - `npm run test`: executa a suite de testes.
@@ -61,7 +61,7 @@ A suite atual cobre:
 
 - Modelos `Project` e `Task`.
 - Regras do contexto `ProjetosProvider`, incluindo carregamento inicial, CRUD de projetos e CRUD de tarefas.
-- Validacões do formulário `NovoProjeto`.
+- Validações do formulário `NovoProjeto`.
 
 Para correr os testes:
 
@@ -85,9 +85,9 @@ db.json             base usada pelo json-server
 ## Regras de negócio implementadas
 
 - Nome do projeto: entre 3 e 15 caracteres.
-- Descricão do projeto: entre 10 e 25 caracteres.
+- Descrição do projeto: entre 10 e 25 caracteres.
 - Nome da tarefa: entre 3 e 15 caracteres.
-- Descricão da tarefa: entre 10 e 25 caracteres.
+- Descrição da tarefa: entre 10 e 25 caracteres.
 - Não são permitidos nomes duplicados dentro do mesmo contexto:
   projeto por nome global e tarefa por nome dentro do projeto.
 - Datas de tarefas precisam ser futuras e validas.
